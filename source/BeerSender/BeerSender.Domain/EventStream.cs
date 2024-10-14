@@ -3,7 +3,7 @@
 public class EventStream<TAggregate>(IEventStore eventStore, Guid aggregateId)
     where TAggregate : Aggregate, new()
 {
-    public int LastSequenceNumber { get; set; } = 0;
+    public int LastSequenceNumber { get; set; }
 
     public TAggregate GetAggregate()
     {

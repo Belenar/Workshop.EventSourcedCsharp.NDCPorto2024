@@ -4,8 +4,8 @@ namespace BeerSender.Tests;
 
 public class TestStore : IEventStore
 {
-    public List<object> previousEvents = new();
-    public List<object> newEvents = new();
+    public List<object> previousEvents = [];
+    public List<object> newEvents = [];
 
     public List<StoredEvent> GetEvents(Guid aggregateId)
     {

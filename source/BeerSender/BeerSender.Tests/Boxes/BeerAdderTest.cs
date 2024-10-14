@@ -1,4 +1,6 @@
 using BeerSender.Domain;
+using BeerSender.Domain.Boxes;
+using BeerSender.Domain.Boxes.CommandHandlers;
 
 namespace BeerSender.Tests.Boxes
 {

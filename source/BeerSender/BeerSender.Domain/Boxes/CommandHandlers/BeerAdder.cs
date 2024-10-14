@@ -1,4 +1,4 @@
-﻿namespace BeerSender.Domain;
+﻿namespace BeerSender.Domain.Boxes.CommandHandlers;
 
 public class BeerAdder(IEventStore eventStore)
     : CommandHandler<AddBeerBottle>(eventStore)

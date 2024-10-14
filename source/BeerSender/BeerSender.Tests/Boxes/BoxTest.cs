@@ -1,10 +1,10 @@
-using BeerSender.Domain;
+using BeerSender.Domain.Boxes;
 
 namespace BeerSender.Tests.Boxes;
 
 public abstract class BoxTest<TCommand> : CommandHandlerTest<TCommand>
 {
-    // Commands
+    // AddBeerBottle
     protected AddBeerBottle Add_beer_bottle_to_box(BeerBottle bottle)
     {
         return new AddBeerBottle(boxId, bottle);
@@ -24,11 +24,10 @@ public abstract class BoxTest<TCommand> : CommandHandlerTest<TCommand>
     // Content
     protected Guid boxId = Guid.NewGuid();
 
-    protected BeerBottle gouden_carolus = new()
-    {
-        Brewery = "Gouden Carolus",
-        Name = "Quadrupel Whisky Infused",
-        AlcoholPercentage = 12.7,
-        BeerType = BeerType.Stout
-    };
+    protected BeerBottle gouden_carolus = new (
+        "Gouden Carolus",
+        "Quadrupel Whisky Infused",
+        12.7,
+        BeerType.Stout
+    );
 }
