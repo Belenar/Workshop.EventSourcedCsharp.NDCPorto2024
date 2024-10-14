@@ -5,6 +5,8 @@ public class Box : Aggregate
     public List<BeerBottle> BeerBottles { get; } = [];
     public BoxCapacity? Capacity { get; private set; }
     public ShippingLabel? ShippingLabel { get; private set; }
+    public bool IsClosed { get; private set; }
+    public bool IsSent { get; private set; }
 
     public void Apply(BeerBottleAdded @event)
     {
@@ -14,7 +16,6 @@ public class Box : Aggregate
     public void Apply(BoxCreated @event)
     {
         Capacity = @event.BoxCapacity;
-
     }
 
     public void Apply(ShippingLabelAdded @event)
@@ -22,10 +23,17 @@ public class Box : Aggregate
         ShippingLabel = @event.ShippingLabel;
     }
 
-    public bool IsFull()
+    public void Apply(BoxClosed @event)
     {
-        return BeerBottles.Count >= Capacity?.NumberOfSpots;
+        IsClosed = true;
     }
+
+    public void Apply(BoxSent @event)
+    {
+        IsSent = true;
+    }
+
+    public bool IsFull => BeerBottles.Count >= Capacity?.NumberOfSpots;
 }
 
 public record BoxCapacity

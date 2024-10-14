@@ -20,6 +20,16 @@ public abstract class BoxTest<TCommand> : CommandHandlerTest<TCommand>
         return new AddShippingLabel(boxId, new ShippingLabel(carrier, trackingCode));
     }
 
+    protected CloseBox Close_box()
+    {
+        return new CloseBox(boxId);
+    }
+
+    protected SendBox Send_box()
+    {
+        return new SendBox(boxId);
+    }
+
     // Events
     protected BoxCreated Box_created_with_capacity(int capacity)
     {
@@ -54,6 +64,31 @@ public abstract class BoxTest<TCommand> : CommandHandlerTest<TCommand>
     protected FailedToAddShippingLabel Label_was_invalid()
     {
         return new FailedToAddShippingLabel(FailedToAddShippingLabel.Reason.LabelWasInvalid);
+    }
+
+    protected BoxClosed Box_was_closed()
+    {
+        return new BoxClosed();
+    }
+
+    protected FailedToCloseBox Box_was_empty()
+    {
+        return new FailedToCloseBox(FailedToCloseBox.Reason.BoxWasEmpty);
+    }
+
+    protected BoxSent Box_was_sent()
+    {
+        return new BoxSent();
+    }
+    
+    protected FailedToSendBox Box_was_not_closed()
+    {
+        return new FailedToSendBox(FailedToSendBox.Reason.BoxWasNotClosed);
+    }
+
+    protected FailedToSendBox Box_has_no_label()
+    {
+        return new FailedToSendBox(FailedToSendBox.Reason.BoxHadNoLabel);
     }
 
     // Content

@@ -16,3 +16,12 @@ public record AddShippingLabel
     Guid BoxId,
     ShippingLabel ShippingLabel
 );
+
+public record CloseBox
+(
+    Guid BoxId
+);
+
+public record SendBox(
+    Guid BoxId
+);

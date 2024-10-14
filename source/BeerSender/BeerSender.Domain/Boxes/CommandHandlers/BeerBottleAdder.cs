@@ -8,7 +8,7 @@ public class BeerBottleAdder(IEventStore eventStore)
         var stream = GetStream<Box>(command.BoxId);
         var boxAggregate = stream.GetAggregate();
 
-        if (boxAggregate.IsFull())
+        if (boxAggregate.IsFull)
         {
             stream.Append(new FailedToAddBeerBottle(FailedToAddBeerBottle.Reason.BoxWasFull));
         }
