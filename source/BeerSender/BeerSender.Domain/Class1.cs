@@ -37,7 +37,7 @@
 
     public class Box : Aggregate
     {
-        public List<BeerBottle> BeerBottles { get; } = new();
+        public List<BeerBottle> BeerBottles { get; } = [];
         public BoxCapacity BoxCapacity { get; set; }
 
         public void Apply(BeerBottleAdded @event)
@@ -48,6 +48,11 @@
         public void Apply(BoxAdded @event)
         {
             BoxCapacity = @event.boxCapacity;
+        }
+
+        public bool IsFull()
+        {
+            return BeerBottles.Count >= BoxCapacity.NumberOfSpots;
         }
     }
 
@@ -73,6 +78,23 @@
     {
         public void Apply(object @event) {}
     }
-    
 
+    public class CommandHanlder<TCommand>
+    {
+
+    }
+    
+    public class BeerAdder : CommandHanlder<AddBeerBottle>
+    {
+        public IEnumerable<object> Handle(AddBeerBottle command)
+        {
+            Box boxAggregate = GetAggregate<Box>(command.BoxId);
+
+            if (boxAggregate.IsFull()) { 
+                yield return new FailedToAddBeerBottle(FailedToAddBeerBottle.FailedReasonType.BoxWasFull);
+            }
+
+            yield return new BeerBottleAdded(command.BeerBottle);
+        }
+    }
 }
