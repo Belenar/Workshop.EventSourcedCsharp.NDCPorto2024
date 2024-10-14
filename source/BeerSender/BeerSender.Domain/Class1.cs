@@ -1,4 +1,6 @@
-﻿namespace BeerSender.Domain
+﻿using System.Text;
+
+namespace BeerSender.Domain
 {
     public class BeerBottle
     {
@@ -7,7 +9,7 @@
         public BeerType BeerType { get; set; }
         public string Brewery { get; set; }
     }
-    
+
     public enum BeerType
     {
         Ipa,
@@ -20,7 +22,7 @@
         Guid BoxId,
         BeerBottle BeerBottle
     );
-    
+
     public record BeerBottleAdded
     (
         BeerBottle BeerBottle
@@ -63,38 +65,73 @@
     public record BoxCapacity
         (int NumberOfSpots)
     {
-        public static BoxCapacity Create(int desiredCapacity) 
+        public static BoxCapacity Create(int desiredCapacity)
             => desiredCapacity switch
-                {
-                    <= 6 => new BoxCapacity(6),
-                    <= 12 => new BoxCapacity(12),
-                    <= 24 => new BoxCapacity(24),
-                    _ => throw new InvalidOperationException("Box capacity can't be bigger than 24")
-                };
+            {
+                <= 6 => new BoxCapacity(6),
+                <= 12 => new BoxCapacity(12),
+                <= 24 => new BoxCapacity(24),
+                _ => throw new InvalidOperationException("Box capacity can't be bigger than 24")
+            };
 
     }
 
     public abstract class Aggregate
     {
-        public void Apply(object @event) {}
+        public void Apply(object @event) { }
     }
 
-    public class CommandHanlder<TCommand>
+    public class CommandHandler<TCommand>(IEventStore EventStore)
     {
-
+        protected EventStream<TAggregate> GetStream<TAggregate>(Guid aggregateId)
+            where TAggregate : Aggregate, new()
+        {
+            return new EventStream<TAggregate>(EventStore, aggregateId);
+        }
     }
-    
-    public class BeerAdder : CommandHanlder<AddBeerBottle>
+
+    public interface IEventStore
+    {
+        List<object> GetEvents(Guid aggregateId);
+        void SaveChanges();
+    }
+
+    public class EventStream<TAggregate>(IEventStore eventStore, Guid aggregateId)
+        where TAggregate : Aggregate, new()
+    {
+        public TAggregate GetAggregate()
+        {
+            var events = eventStore.GetEvents(aggregateId);
+            TAggregate aggregate = new TAggregate();
+            foreach (var @event in events)
+            {
+                aggregate.Apply((dynamic)@event);
+            }
+
+            return aggregate;
+        }
+
+        public object Append(object @event)
+        {
+            // TODO: append to the store
+            return @event;
+        }
+    }
+
+    public class BeerAdder(IEventStore EventStore)
+        : CommandHandler<AddBeerBottle>(EventStore)
     {
         public IEnumerable<object> Handle(AddBeerBottle command)
         {
-            Box boxAggregate = GetAggregate<Box>(command.BoxId);
+            var stream = GetStream<Box>(command.BoxId);
+            var boxAggregate = stream.GetAggregate();
 
-            if (boxAggregate.IsFull()) { 
-                yield return new FailedToAddBeerBottle(FailedToAddBeerBottle.FailedReasonType.BoxWasFull);
+            if (boxAggregate.IsFull())
+            {
+                yield return stream.Append(new FailedToAddBeerBottle(FailedToAddBeerBottle.FailedReasonType.BoxWasFull));
             }
 
-            yield return new BeerBottleAdded(command.BeerBottle);
+            yield return stream.Append(new BeerBottleAdded(command.BeerBottle));
         }
     }
 }
