@@ -1,6 +1,6 @@
 ﻿namespace BeerSender.Domain.Boxes.CommandHandlers;
 
-public class BeerAdder(IEventStore eventStore)
+public class BeerBottleAdder(IEventStore eventStore)
     : CommandHandler<AddBeerBottle>(eventStore)
 {
     public override void Handle(AddBeerBottle command)
@@ -10,9 +10,12 @@ public class BeerAdder(IEventStore eventStore)
 
         if (boxAggregate.IsFull())
         {
-            stream.Append(new FailedToAddBeerBottle(FailedToAddBeerBottle.FailedReasonType.BoxWasFull));
+            stream.Append(new FailedToAddBeerBottle(FailedToAddBeerBottle.Reason.BoxWasFull));
         }
-
-        stream.Append(new BeerBottleAdded(command.BeerBottle));
+        else
+        {
+            stream.Append(new BeerBottleAdded(command.BeerBottle));
+        }
     }
+
 }

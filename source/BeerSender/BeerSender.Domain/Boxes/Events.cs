@@ -1,15 +1,27 @@
 ﻿namespace BeerSender.Domain.Boxes;
 
+//
+public record BoxCreated(BoxCapacity? BoxCapacity);
+
+public record FailedToCreateBox(FailedToCreateBox.Reason FailReason)
+{
+    public enum Reason
+    {
+        BoxAlreadyCreated,
+        InvalidCapacity
+    }
+}
+
+
+// AddBeerBottle
 public record BeerBottleAdded
 (
     BeerBottle BeerBottle
 );
 
-public record BoxAdded(BoxCapacity? BoxCapacity);
-
-public record FailedToAddBeerBottle(FailedToAddBeerBottle.FailedReasonType FailedReason)
+public record FailedToAddBeerBottle(FailedToAddBeerBottle.Reason FailReason)
 {
-    public enum FailedReasonType
+    public enum Reason
     {
         BoxWasFull
     }

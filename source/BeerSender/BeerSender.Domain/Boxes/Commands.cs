@@ -1,6 +1,6 @@
 ﻿namespace BeerSender.Domain.Boxes;
 
-public record AddBox(
+public record CreateBox(
     Guid BoxId,
     int DesiredCapacity
 );

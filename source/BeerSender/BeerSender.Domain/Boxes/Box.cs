@@ -10,7 +10,7 @@ public class Box : Aggregate
         BeerBottles.Add(@event.BeerBottle);
     }
 
-    public void Apply(BoxAdded @event)
+    public void Apply(BoxCreated @event)
     {
         Capacity = @event.BoxCapacity;
     }
@@ -47,5 +47,8 @@ public enum BeerType
 {
     Ipa,
     Stout,
-    Sour
+    Sour,
+    Double,
+    Triple, 
+    Quadruple
 }
