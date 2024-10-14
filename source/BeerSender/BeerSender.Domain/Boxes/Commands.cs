@@ -10,3 +10,9 @@ public record AddBeerBottle
     Guid BoxId,
     BeerBottle BeerBottle
 );
+
+public record AddShippingLabel
+(
+    Guid BoxId,
+    ShippingLabel ShippingLabel
+);
