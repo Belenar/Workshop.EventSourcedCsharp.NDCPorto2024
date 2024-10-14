@@ -5,14 +5,19 @@ namespace BeerSender.Tests.Boxes;
 public abstract class BoxTest<TCommand> : CommandHandlerTest<TCommand>
 {
     // Commands
+    protected CreateBox Create_box_for_capacity(int desiredNumberOfSpots)
+    {
+        return new CreateBox(boxId, desiredNumberOfSpots);
+    }
+
     protected AddBeerBottle Add_beer_bottle_to_box(BeerBottle bottle)
     {
         return new AddBeerBottle(boxId, bottle);
     }
-    
-    protected CreateBox Create_box_for_capacity(int desiredNumberOfSpots)
+
+    protected AddShippingLabel Add_label_with_carrier_and_code(Carrier carrier, string trackingCode)
     {
-        return new CreateBox(boxId, desiredNumberOfSpots);
+        return new AddShippingLabel(boxId, new ShippingLabel(carrier, trackingCode));
     }
 
     // Events
@@ -39,6 +44,16 @@ public abstract class BoxTest<TCommand> : CommandHandlerTest<TCommand>
     protected FailedToAddBeerBottle Box_was_full()
     {
         return new FailedToAddBeerBottle(FailedToAddBeerBottle.Reason.BoxWasFull);
+    }
+
+    protected ShippingLabelAdded Shipping_label_added_with_carrier_and_code(Carrier carrier, string trackingCode)
+    {
+        return new ShippingLabelAdded(new ShippingLabel(carrier, trackingCode));
+    }
+
+    protected FailedToAddShippingLabel Label_was_invalid()
+    {
+        return new FailedToAddShippingLabel(FailedToAddShippingLabel.Reason.LabelWasInvalid);
     }
 
     // Content

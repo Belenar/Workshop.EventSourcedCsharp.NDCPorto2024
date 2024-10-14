@@ -1,6 +1,5 @@
 ﻿namespace BeerSender.Domain.Boxes;
 
-//
 public record BoxCreated(BoxCapacity? BoxCapacity);
 
 public record FailedToCreateBox(FailedToCreateBox.Reason FailReason)
@@ -12,8 +11,6 @@ public record FailedToCreateBox(FailedToCreateBox.Reason FailReason)
     }
 }
 
-
-// AddBeerBottle
 public record BeerBottleAdded
 (
     BeerBottle BeerBottle
@@ -24,5 +21,18 @@ public record FailedToAddBeerBottle(FailedToAddBeerBottle.Reason FailReason)
     public enum Reason
     {
         BoxWasFull
+    }
+}
+
+public record ShippingLabelAdded
+(
+    ShippingLabel ShippingLabel
+);
+
+public record FailedToAddShippingLabel(FailedToAddShippingLabel.Reason FailReason)
+{
+    public enum Reason
+    {
+        LabelWasInvalid
     }
 }
