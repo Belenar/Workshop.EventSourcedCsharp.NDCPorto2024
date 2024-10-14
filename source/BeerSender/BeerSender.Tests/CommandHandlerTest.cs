@@ -8,6 +8,6 @@ public abstract class CommandHandlerTest<TCommand> : TestBase
 
     protected void When(TCommand command)
     {
-        var events = Handler.Handle(command).ToList();
+        Handler.Handle(command);
     }
 }

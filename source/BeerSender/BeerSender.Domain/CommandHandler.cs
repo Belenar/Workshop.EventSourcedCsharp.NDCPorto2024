@@ -8,5 +8,5 @@ public abstract class CommandHandler<TCommand>(IEventStore eventStore)
         return new EventStream<TAggregate>(eventStore, aggregateId);
     }
 
-    public abstract IEnumerable<object> Handle(TCommand command);
+    public abstract void Handle(TCommand command);
 }
