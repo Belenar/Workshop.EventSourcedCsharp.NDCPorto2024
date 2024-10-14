@@ -13,7 +13,7 @@ public class EventStream<TAggregate>(IEventStore eventStore, Guid aggregateId)
         TAggregate aggregate = new TAggregate();
         foreach (var @event in events)
         {
-            aggregate.Apply((dynamic)@event);
+            aggregate.Apply((dynamic)@event.Payload);
             LastSequenceNumber = @event.SequenceNumber;
         }
 
