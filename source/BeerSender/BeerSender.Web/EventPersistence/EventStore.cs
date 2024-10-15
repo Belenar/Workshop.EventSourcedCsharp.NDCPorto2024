@@ -1,8 +1,10 @@
 ﻿using BeerSender.Domain;
+using BeerSender.Web.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace BeerSender.Web.EventPersistence;
 
-public class EventStore(EventContext dbContext) : IEventStore
+public class EventStore(EventContext dbContext, IHubContext<EventHub> hubContext) : IEventStore
 {
     public List<StoredEvent> GetEvents(Guid aggregateId)
     {
@@ -26,6 +28,9 @@ public class EventStore(EventContext dbContext) : IEventStore
             Timestamp = @event.Timestamp,
             PayLoad = @event.Payload
         });
+
+        hubContext.Clients.Group(@event.AggregateId.ToString())
+            .SendAsync("publish_event", @event.AggregateId, @event.Payload);
     }
 
     public void SaveChanges()

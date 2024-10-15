@@ -22,12 +22,10 @@ document.getElementById("createPackage").addEventListener("click", function (eve
     });
 
     var command = {
-        "$type": "CreatePackage",
-        "command": {
-            "Aggregate_id": aggregate_id
-        }
+        "boxId": aggregate_id,
+        "desiredCapacity": 18
     }
-    postCommand(command);
+    postCommand("/api/Command/Box/create", command);
 
     event.preventDefault();
 });
@@ -37,19 +35,21 @@ document.getElementById("addLabel").addEventListener("click", function (event) {
     var package_label = document.getElementById("label_input").value;
 
     var command = {
-        "$type": "AddLabel",
-        "command": {
-            "Aggregate_id": aggregate_id,
-            "Label": package_label
+        "boxId": aggregate_id,
+        "beerBottle": {
+            "brewery": "Hannes' awesome beers",
+            "name": package_label,
+            "alcoholPercentage": 10,
+            "beerType": 4
         }
     }
-    postCommand(command);
+    postCommand("/api/Command/Box/addbottle", command);
 
     event.preventDefault();
 });
 
-function postCommand(command) {
-    fetch("/api/Command", {
+function postCommand(endpoint, command) {
+    fetch(endpoint, {
         method: "POST",
         body: JSON.stringify(command),
         headers: {
