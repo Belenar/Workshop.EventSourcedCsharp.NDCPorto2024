@@ -14,5 +14,13 @@ namespace BeerSender.Web.Controllers
             router.HandleCommand(command);
             return Accepted();
         }
+
+        [HttpPost]
+        [Route("addbottle")]
+        public IActionResult AddBottle([FromBody] AddBeerBottle command)
+        {
+            router.HandleCommand(command);
+            return Accepted();
+        }
     }
 }

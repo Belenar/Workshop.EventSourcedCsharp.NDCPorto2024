@@ -1,5 +1,7 @@
+using BeerSender.Web.EventPersistence;
 using BeerSender.Web.Extensions;
 using BeerSender.Web.Hubs;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.RegisterDomain();
+
+builder.Services.AddDbContext<EventContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("EventStore"));
+});
 
 var app = builder.Build();
 

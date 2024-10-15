@@ -1,6 +1,6 @@
 ﻿namespace BeerSender.Domain;
 
-public record StoredEvent(
+public record StoredEvent (
     Guid AggregateId,
     int SequenceNumber,
     DateTime Timestamp,
