@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using BeerSender.Domain;
+﻿using BeerSender.Domain;
 
 namespace BeerSender.Web.EventPersistence;
 
@@ -14,23 +13,19 @@ public class EventStore(EventContext dbContext) : IEventStore
                 e.AggregateId, 
                 e.SequenceNumber, 
                 e.Timestamp, 
-                Deserialize(e.EventTypeName, e.EventBody)))
+                e.PayLoad))
             .ToList();
     }
 
-    private static object Deserialize(string eventTypeName, string eventBody)
-    {
-        return JsonSerializer.Deserialize(eventBody, Type.GetType($"{eventTypeName}, {typeof(Aggregate).Assembly.FullName}"));
-    }
 
     public void AppendEvent(StoredEvent @event)
     {
-        dbContext.Events.Add(new PersistedEvent(
-            @event.AggregateId,
-            @event.SequenceNumber,
-            @event.Timestamp,
-            @event.Payload.GetType().FullName,
-            JsonSerializer.Serialize(@event.Payload)));
+        dbContext.Events.Add(new PersistedEvent{
+            AggregateId = @event.AggregateId,
+            SequenceNumber = @event.SequenceNumber,
+            Timestamp = @event.Timestamp,
+            PayLoad = @event.Payload
+        });
     }
 
     public void SaveChanges()

@@ -1,6 +1,8 @@
 using BeerSender.Web.EventPersistence;
 using BeerSender.Web.Extensions;
 using BeerSender.Web.Hubs;
+using BeerSender.Web.Projections;
+using BeerSender.Web.Projections.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +25,14 @@ builder.Services.AddDbContext<EventContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("EventStore"));
 });
+
+builder.Services.AddDbContext<ReadContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ReadStore"));
+});
+
+builder.Services.AddTransient<BoxStatusProjection>();
+builder.Services.AddHostedService<ProjectionService<BoxStatusProjection>>();
 
 var app = builder.Build();
 

@@ -1,6 +1,9 @@
-﻿using BeerSender.Domain;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using BeerSender.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Text.Json;
 
 namespace BeerSender.Web.EventPersistence;
 
@@ -17,13 +20,39 @@ public class EventContext : DbContext
     }
 }
 
-public record PersistedEvent(
-    Guid AggregateId,
-    int SequenceNumber,
-    DateTime Timestamp,
-    string EventTypeName,
-    string EventBody
-);
+public class PersistedEvent
+{
+    public Guid AggregateId { get; set; }
+
+    public int SequenceNumber { get; set; }
+    public DateTime Timestamp { get; set; }
+    public string EventTypeName { get; set; }
+    public string EventBody { get; set; }
+
+    [Timestamp]
+    public ulong RowVersion { get; set; }
+
+    private object? _payload;
+    [NotMapped]
+    public object PayLoad
+    {
+        get
+        {
+            if (_payload is null)
+            {
+                _payload = JsonSerializer.Deserialize(EventBody, Type.GetType($"{EventTypeName}, {typeof(Aggregate).Assembly.FullName}"));
+            }
+
+            return _payload;
+        }
+        set
+        {
+            _payload = value;
+            EventTypeName = value.GetType().FullName;
+            EventBody = JsonSerializer.Serialize(value);
+        }
+    }
+};
 
 class EventMapping : IEntityTypeConfiguration<PersistedEvent>
 {
