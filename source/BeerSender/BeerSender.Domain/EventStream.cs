@@ -1,32 +1,15 @@
 ﻿namespace BeerSender.Domain;
 
-public class EventStream<TAggregate>(IEventStore eventStore, Guid aggregateId)
-    where TAggregate : Aggregate, new()
+public class EventStream(IEventStore eventStore, Guid aggregateId)
 {
-    public int LastSequenceNumber { get; set; }
-
-    public TAggregate GetAggregate()
-    {
-        var events = eventStore
-            .GetEvents(aggregateId);
-
-        TAggregate aggregate = new TAggregate();
-        foreach (var @event in events)
-        {
-            aggregate.Apply((dynamic)@event.Payload);
-            LastSequenceNumber = @event.SequenceNumber;
-        }
-
-        return aggregate;
-    }
+    public int LastSequenceNumber => StoredEvents.Count;
+    public List<StoredEvent> StoredEvents { get; private set; } = [];
 
     public object Append(object @event)
     {
-        LastSequenceNumber++;
-
         var storedEvent = new StoredEvent(
             aggregateId,
-            LastSequenceNumber,
+            LastSequenceNumber + 1,
             DateTime.UtcNow,
             @event
         );

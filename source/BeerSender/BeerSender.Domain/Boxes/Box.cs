@@ -1,6 +1,6 @@
 ﻿namespace BeerSender.Domain.Boxes;
 
-public class Box : Aggregate
+public class Box(IEventStore eventStore, Guid id) : Aggregate(eventStore, id)
 {
     public List<BeerBottle> BeerBottles { get; } = [];
     public BoxCapacity? Capacity { get; private set; }

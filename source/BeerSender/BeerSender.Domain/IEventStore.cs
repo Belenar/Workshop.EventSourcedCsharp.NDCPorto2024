@@ -2,7 +2,7 @@
 
 public interface IEventStore
 {
-    List<StoredEvent> GetEvents(Guid aggregateId);
+    EventStream GetEventStream(Guid aggregateId);
     void AppendEvent(StoredEvent @event);
     void SaveChanges();
 }

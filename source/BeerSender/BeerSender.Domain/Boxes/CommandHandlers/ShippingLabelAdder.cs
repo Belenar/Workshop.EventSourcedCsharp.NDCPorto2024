@@ -1,20 +1,19 @@
 ﻿namespace BeerSender.Domain.Boxes.CommandHandlers;
 
 public class ShippingLabelAdder(IEventStore eventStore)
-    : CommandHandler<AddShippingLabel>(eventStore)
+    : CommandHandler<AddShippingLabel>()
 {
     public override void Handle(AddShippingLabel command)
     {
-        var stream = GetStream<Box>(command.BoxId);
-        var boxAggregate = stream.GetAggregate();
+        var boxAggregate = new Box(eventStore, command.BoxId);
 
         if (command.ShippingLabel.IsValid())
         {
-            stream.Append(new ShippingLabelAdded(command.ShippingLabel));
+            boxAggregate.AppendEvent(new ShippingLabelAdded(command.ShippingLabel));
         }
         else
         {
-            stream.Append(new FailedToAddShippingLabel(FailedToAddShippingLabel.Reason.LabelWasInvalid));
+            boxAggregate.AppendEvent(new FailedToAddShippingLabel(FailedToAddShippingLabel.Reason.LabelWasInvalid));
         }
     }
 

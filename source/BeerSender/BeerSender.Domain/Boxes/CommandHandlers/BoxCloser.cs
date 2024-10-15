@@ -1,20 +1,19 @@
 ﻿namespace BeerSender.Domain.Boxes.CommandHandlers;
 
 public class BoxCloser(IEventStore eventStore)
-    : CommandHandler<CloseBox>(eventStore)
+    : CommandHandler<CloseBox>()
 {
     public override void Handle(CloseBox command)
     {
-        var stream = GetStream<Box>(command.BoxId);
-        var boxAggregate = stream.GetAggregate();
+        var boxAggregate = new Box(eventStore, command.BoxId);
 
         if (boxAggregate.BeerBottles.Any())
         {
-            stream.Append(new BoxClosed());
+            boxAggregate.AppendEvent(new BoxClosed());
         }
         else
         {
-            stream.Append(new FailedToCloseBox(FailedToCloseBox.Reason.BoxWasEmpty));
+            boxAggregate.AppendEvent(new FailedToCloseBox(FailedToCloseBox.Reason.BoxWasEmpty));
         }
     }
 }
